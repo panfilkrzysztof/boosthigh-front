@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 
 import { MatTableDataSource } from '@angular/material/table';
 
+import { animate, state, style, transition, trigger } from '@angular/animations';
+
 
 export interface VehiclesInterface {
   id: number,
@@ -30,13 +32,25 @@ export interface StatusInterface {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ]
 })
 export class AppComponent {
   filterValues = {};
+  devices = new MatTableDataSource();
+  devicesList: DevicesInterface[] | undefined;
 
   dataSource = new MatTableDataSource();
-  displayedColumns: string[] = ['id', 'name', 'type', 'action'];
+  displayedColumns: string[] = ['id', 'name', 'type', 'status'];
+  devicesDisplayedColumns: string[] = ['id', 'vehicle_id', 'type', 'name', 'status'];
+  expandedElement: any | null;
+  expandedElementDevice: any | null;
   vehicleTypes = [
     { value: "bus", name: "Bus" },
     { value: "tram", name: "Tram" },
@@ -289,9 +303,11 @@ export class AppComponent {
       }
     ];
     this.dataSource.data = vehicles;
+    this.devices.data = devices;
+    this.devicesList = devices;
   }
 
   applyFilter(data: any) {
-    this.dataSource.filter = data.value.trim().toLowerCase();
+    this.dataSource.filter = data.value;
   }
 }
