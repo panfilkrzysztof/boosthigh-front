@@ -60,6 +60,8 @@ export class AppComponent {
 
   ngOnInit() {
     this.getData();
+
+
   }
 
   getData() {
@@ -309,5 +311,8 @@ export class AppComponent {
 
   applyFilter(data: any) {
     this.dataSource.filter = data.value;
+  }
+  applyDeviceFilter(data: number) {
+    this.devices.filter = data.toString();
   }
 }

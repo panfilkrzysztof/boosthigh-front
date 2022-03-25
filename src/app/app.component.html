@@ -88,7 +88,7 @@
             <ng-container>
               <tr mat-row *matRowDef="let row; columns: devicesDisplayedColumns;" class="example-element-row"
                 [class.example-expanded-row]="expandedElementDevice === row"
-                (click)="expandedElementDevice = expandedElementDevice === row ? null : row">
+                (click)="expandedElementDevice = expandedElementDevice === row ? null : row;applyDeviceFilter(row.id)">
               </tr>
             </ng-container>
             <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
@@ -102,7 +102,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="example-element-row"
       [class.example-expanded-row]="expandedElement === row"
-      (click)="expandedElement = expandedElement === row ? null : row">
+      (click)="expandedElement = expandedElement === row ? null : row;applyDeviceFilter(row.id)">
     </tr>
     <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 
