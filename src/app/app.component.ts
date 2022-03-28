@@ -42,29 +42,39 @@ export interface StatusInterface {
   ]
 })
 export class AppComponent {
-  filterValues = {};
-  devices = new MatTableDataSource();
-  devicesList: DevicesInterface[] | undefined;
-
-  dataSource = new MatTableDataSource();
-  displayedColumns: string[] = ['id', 'name', 'type', 'status'];
-  devicesDisplayedColumns: string[] = ['id', 'vehicle_id', 'type', 'name', 'status'];
-  expandedElement: any | null;
-  expandedElementDevice: any | null;
+  // 1-st level - Vehicles //
+  vehicles = new MatTableDataSource();
+  vehiclesDisplayedColumns: string[] = ['id', 'v_name', 'v_type', 'v_status'];
+  expandedElementVehicle: any | null;
   vehicleTypes = [
     { value: "bus", name: "Bus" },
     { value: "tram", name: "Tram" },
     { value: "train", name: "Train" }
   ];
 
+  // 2-nd level- devices //
+  devices = new MatTableDataSource();
+  devicesList: DevicesInterface[] | undefined; //temp
+  devicesDisplayedColumns: string[] = ['id', 'vehicle_id', 'd_type', 'd_name', 'd_status'];
+  expandedElementDevice: any | null;
+
+  // 3-rd level - components //
+  components = new MatTableDataSource();
+  componentsDisplayedColumns: string[] = ['id', 'device_id', 'c_type', 'c_name', 'c_status'];
+  expandedElementComponent: any | null;
+
+  // 4-th level - status //
+  status = new MatTableDataSource();
+  statusDisplayedColumns: string[] = ['id', 'component_id', 's_type', 's_description', 's_status'];
+  expandedElementStatus: any | null;
 
   ngOnInit() {
+    // get data from the database
     this.getData();
-
-
   }
 
   getData() {
+    //temporary const value - replace with functions that retrieve data from the database //
     const vehicles: VehiclesInterface[] = [
       {
         id: 1,
@@ -304,14 +314,17 @@ export class AppComponent {
         s_description: "Zacięcie papieru"
       }
     ];
-    this.dataSource.data = vehicles;
+    this.vehicles.data = vehicles;
     this.devices.data = devices;
-    this.devicesList = devices;
+    this.devicesList = devices; //temp
   }
 
+
+  // Filter Vehicles by type 
   applyFilter(data: any) {
-    this.dataSource.filter = data.value;
+    this.vehicles.filter = data.value;
   }
+  // Filter Devices by vehicle_id
   applyDeviceFilter(data: number) {
     this.devices.filter = data.toString();
   }
