@@ -19,95 +19,188 @@
     </mat-select>
   </mat-form-field>
 
+  <!-- Vehicle table start-->
   <table mat-table #tableVehicle [dataSource]="vehicles" class="mat-elevation-z8" multiTemplateDataRows matSort>
+    <!-- Vehicle table header start-->
     <ng-container matColumnDef="id">
       <th mat-header-cell mat-sort-header *matHeaderCellDef>ID</th>
       <td mat-cell *matCellDef="let row"> {{row.id}} </td>
     </ng-container>
-    <ng-container matColumnDef="v_name">
+    <ng-container matColumnDef="name">
       <th mat-header-cell mat-sort-header *matHeaderCellDef>Name</th>
-      <td mat-cell *matCellDef="let row"> {{row.v_name}} </td>
+      <td mat-cell *matCellDef="let row"> {{row.name}} </td>
     </ng-container>
-    <ng-container matColumnDef="v_type">
+    <ng-container matColumnDef="type">
       <th mat-header-cell mat-sort-header *matHeaderCellDef>Type</th>
-      <td mat-cell *matCellDef="let row"> {{row.v_type}} </td>
+      <td mat-cell *matCellDef="let row"> {{row.type}} </td>
     </ng-container>
-    <ng-container matColumnDef="v_status">
+    <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef>Status</th>
       <td mat-cell *matCellDef="let row">
         <span class="material-icons">edit</span>
       </td>
     </ng-container>
-    <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+    <!-- Vehicle table header end-->
+
+    <!-- Vehicle table Expanded Content start -->
     <ng-container matColumnDef="expandedDetail">
       <td mat-cell *matCellDef="let element" [attr.colspan]="vehiclesDisplayedColumns.length">
         <div class="example-element-detail"
           [@detailExpand]="element == expandedElementVehicle ? 'expanded' : 'collapsed'">
-          Available devices: {{element.id}}
+
+          <!-- Device table start-->
           <table mat-table #tableDevice [dataSource]="devices" class="mat-elevation-z8" multiTemplateDataRows matSort>
+            <!-- Device table header start-->
             <ng-container matColumnDef="id">
               <th mat-header-cell mat-sort-header *matHeaderCellDef>ID</th>
               <td mat-cell *matCellDef="let row"> {{row.id}} </td>
             </ng-container>
             <ng-container matColumnDef="vehicle_id">
               <th mat-header-cell mat-sort-header *matHeaderCellDef>Vehicle id</th>
-              <td mat-cell *matCellDef="let row"> {{row.vehicle_id}} </td>
+              <td mat-cell *matCellDef="let row"> {{row.vehicleId}} </td>
             </ng-container>
-            <ng-container matColumnDef="d_type">
+            <ng-container matColumnDef="type">
               <th mat-header-cell mat-sort-header *matHeaderCellDef>Type</th>
-              <td mat-cell *matCellDef="let row"> {{row.d_type}} </td>
+              <td mat-cell *matCellDef="let row"> {{row.type}} </td>
             </ng-container>
-            <ng-container matColumnDef="d_name">
+            <ng-container matColumnDef="name">
               <th mat-header-cell mat-sort-header *matHeaderCellDef>Name</th>
-              <td mat-cell *matCellDef="let row"> {{row.d_name}} </td>
+              <td mat-cell *matCellDef="let row"> {{row.name}} </td>
             </ng-container>
-            <ng-container matColumnDef="d_status">
+            <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef>Status</th>
               <td mat-cell *matCellDef="let row">
                 <span class="material-icons">edit</span>
               </td>
             </ng-container>
-            <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+            <!-- Device table header end-->
+
+            <!-- Device table Expanded Content start -->
             <ng-container matColumnDef="expandedDetail">
               <td mat-cell *matCellDef="let element" [attr.colspan]="devicesDisplayedColumns.length">
                 <div class="example-element-detail"
                   [@detailExpand]="element == expandedElementDevice ? 'expanded' : 'collapsed'">
-                  <!--Available devices 2:{{element.id}}
-                  <ul>
-                    <ng-container *ngFor="let device of devicesList">
-                      <li *ngIf="element.id==device.vehicle_id">
-                        <span>{{device.d_name}}</span>
-                      </li>
+
+                  <!-- Component table start-->
+                  <table mat-table #tableComponent [dataSource]="components" class="mat-elevation-z8"
+                    multiTemplateDataRows matSort>
+                    <!-- Component table header start-->
+                    <ng-container matColumnDef="id">
+                      <th mat-header-cell mat-sort-header *matHeaderCellDef>ID</th>
+                      <td mat-cell *matCellDef="let row"> {{row.id}} </td>
                     </ng-container>
-                  </ul>-->
-                  element id {{element.id}}
+                    <ng-container matColumnDef="device_id">
+                      <th mat-header-cell mat-sort-header *matHeaderCellDef>Device id</th>
+                      <td mat-cell *matCellDef="let row"> {{row.deviceId}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="type">
+                      <th mat-header-cell mat-sort-header *matHeaderCellDef>Type</th>
+                      <td mat-cell *matCellDef="let row"> {{row.type}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell mat-sort-header *matHeaderCellDef>Name</th>
+                      <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="status">
+                      <th mat-header-cell *matHeaderCellDef>Status</th>
+                      <td mat-cell *matCellDef="let row">
+                        <span class="material-icons">edit</span>
+                      </td>
+                    </ng-container>
+                    <!-- Component table header end-->
+
+                    <!-- Component table Expanded Content start -->
+                    <ng-container matColumnDef="expandedDetail">
+                      <td mat-cell *matCellDef="let element" [attr.colspan]="componentsDisplayedColumns.length">
+                        <div class="example-element-detail"
+                          [@detailExpand]="element == expandedElementComponent ? 'expanded' : 'collapsed'">
+
+                          <!-- Status table start-->
+                          <table mat-table #tableStatus [dataSource]="status" class="mat-elevation-z8" matSort>
+                            <!-- Status table header start-->
+                            <ng-container matColumnDef="id">
+                              <th mat-header-cell mat-sort-header *matHeaderCellDef>ID</th>
+                              <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+                            </ng-container>
+                            <ng-container matColumnDef="component_id">
+                              <th mat-header-cell mat-sort-header *matHeaderCellDef>Component id</th>
+                              <td mat-cell *matCellDef="let row"> {{row.componentId}} </td>
+                            </ng-container>
+                            <ng-container matColumnDef="type">
+                              <th mat-header-cell mat-sort-header *matHeaderCellDef>Type</th>
+                              <td mat-cell *matCellDef="let row"> {{row.type}} </td>
+                            </ng-container>
+                            <ng-container matColumnDef="description">
+                              <th mat-header-cell mat-sort-header *matHeaderCellDef>Description</th>
+                              <td mat-cell *matCellDef="let row"> {{row.description}} </td>
+                            </ng-container>
+                            <ng-container matColumnDef="status">
+                              <th mat-header-cell *matHeaderCellDef>Status</th>
+                              <td mat-cell *matCellDef="let row">
+                                <span class="material-icons">{{row.type}}</span>
+                              </td>
+                            </ng-container>
+                            <!-- Status table header end-->
+
+                            <!-- Status table Row start -->
+                            <tr mat-header-row *matHeaderRowDef="statusDisplayedColumns"></tr>
+                            <ng-container>
+                              <tr mat-row *matRowDef="let row; columns: statusDisplayedColumns;"
+                                class="example-element-row">
+                              </tr>
+                            </ng-container>
+                            <!-- Status table Row end -->
+
+                          </table><!-- Status table end-->
+
+                        </div>
+                      </td>
+                    </ng-container><!-- Component table Expanded Content start -->
+
+                    <!-- Component table Row start -->
+                    <tr mat-header-row *matHeaderRowDef="componentsDisplayedColumns"></tr>
+                    <ng-container>
+                      <tr mat-row *matRowDef="let row; columns: componentsDisplayedColumns;" class="example-element-row"
+                        [class.example-expanded-row]="expandedElementComponent === row"
+                        (click)="expandedElementComponent = expandedElementComponent === row ? null : row;applySubFilter('component',row.id)">
+                      </tr>
+                    </ng-container>
+                    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+                    <!-- Component table Row end -->
+
+                  </table><!-- Component table end-->
+
                 </div>
               </td>
-            </ng-container>
+            </ng-container><!-- Device table Expanded Content start -->
 
+            <!-- Device table Row start -->
             <tr mat-header-row *matHeaderRowDef="devicesDisplayedColumns"></tr>
             <ng-container>
               <tr mat-row *matRowDef="let row; columns: devicesDisplayedColumns;" class="example-element-row"
                 [class.example-expanded-row]="expandedElementDevice === row"
-                (click)="expandedElementDevice = expandedElementDevice === row ? null : row;applyDeviceFilter(row.id)">
+                (click)="expandedElementDevice = expandedElementDevice === row ? null : row;applySubFilter('device',row.id)">
               </tr>
             </ng-container>
             <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+            <!-- Device table Row end -->
 
-          </table>
+          </table><!-- Device table end-->
 
         </div>
       </td>
-    </ng-container>
+    </ng-container><!-- Vehicle table Expanded Content start -->
 
+    <!-- Vehicle table Row start -->
     <tr mat-header-row *matHeaderRowDef="vehiclesDisplayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: vehiclesDisplayedColumns;" class="example-element-row"
       [class.example-expanded-row]="expandedElementVehicle === row"
-      (click)="expandedElementVehicle = expandedElementVehicle === row ? null : row;applyDeviceFilter(row.id)">
+      (click)="expandedElementVehicle = expandedElementVehicle === row ? null : row;applySubFilter('vehicle',row.id)">
     </tr>
     <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+    <!-- Vehicle table Row end -->
 
-  </table>
+  </table><!-- Vehicle table end-->
 
 </div>
 

@@ -1,32 +1,32 @@
 import { Component } from '@angular/core';
 
 import { MatTableDataSource } from '@angular/material/table';
-
+import { HttpClient } from '@angular/common/http';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
 
 export interface VehiclesInterface {
   id: number,
-  v_type: string,
-  v_name: string,
+  type: string,
+  name: string,
 };
 export interface DevicesInterface {
   id: number,
   vehicle_id: number,
-  d_type: string,
-  d_name: string,
+  type: string,
+  name: string,
 };
 export interface ComponentsInterface {
   id: number,
   device_id: number,
-  c_type: string,
-  c_name: string,
+  type: string,
+  name: string,
 };
 export interface StatusInterface {
   id: number,
   component_id: number,
-  s_type: string,
-  s_description: string
+  type: string,
+  description: string
 };
 
 @Component({
@@ -42,9 +42,35 @@ export interface StatusInterface {
   ]
 })
 export class AppComponent {
+
+  constructor(private http: HttpClient) {
+    // get data from the database
+    this.getData();
+  }
+
+  public getJSON(url: string) {
+    return new Promise((resolve, reject) => {
+      this.http.get(url, { observe: 'response' })
+        .subscribe(
+          res => {
+            if (!res.ok) {
+              reject("Failed with status: " + res.status + "\nTrying to load " + url);
+            }
+
+            var jsonRes = {};
+            if (res.body != "" && res.body != null)
+              jsonRes = res.body;
+            resolve(jsonRes);
+          },
+          error => {
+          }
+        );
+    }).catch((reason) => false);
+  }
+
   // 1-st level - Vehicles //
   vehicles = new MatTableDataSource();
-  vehiclesDisplayedColumns: string[] = ['id', 'v_name', 'v_type', 'v_status'];
+  vehiclesDisplayedColumns: string[] = ['id', 'name', 'type', 'status'];
   expandedElementVehicle: any | null;
   vehicleTypes = [
     { value: "bus", name: "Bus" },
@@ -55,277 +81,71 @@ export class AppComponent {
   // 2-nd level- devices //
   devices = new MatTableDataSource();
   devicesList: DevicesInterface[] | undefined; //temp
-  devicesDisplayedColumns: string[] = ['id', 'vehicle_id', 'd_type', 'd_name', 'd_status'];
+  devicesDisplayedColumns: string[] = ['id', 'vehicle_id', 'type', 'name', 'status'];
   expandedElementDevice: any | null;
 
   // 3-rd level - components //
   components = new MatTableDataSource();
-  componentsDisplayedColumns: string[] = ['id', 'device_id', 'c_type', 'c_name', 'c_status'];
+  componentsDisplayedColumns: string[] = ['id', 'device_id', 'type', 'name', 'status'];
   expandedElementComponent: any | null;
 
   // 4-th level - status //
   status = new MatTableDataSource();
-  statusDisplayedColumns: string[] = ['id', 'component_id', 's_type', 's_description', 's_status'];
-  expandedElementStatus: any | null;
+  statusDisplayedColumns: string[] = ['id', 'component_id', 'type', 'description', 'status'];
 
   ngOnInit() {
-    // get data from the database
-    this.getData();
+
   }
 
   getData() {
-    //temporary const value - replace with functions that retrieve data from the database //
-    const vehicles: VehiclesInterface[] = [
-      {
-        id: 1,
-        v_type: "bus",
-        v_name: "Autobus 307",
-      },
-      {
-        id: 2,
-        v_type: "bus",
-        v_name: "Autobus 308",
-      },
-      {
-        id: 3,
-        v_type: "tram",
-        v_name: "Tramwaj 336",
-      },
-      {
-        id: 4,
-        v_type: "tram",
-        v_name: "Tramwaj 337",
-      },
-      {
-        id: 5,
-        v_type: "train",
-        v_name: "Pociąg 14",
-      },
-    ];
-    const devices: DevicesInterface[] = [
-      {
-        id: 1,
-        vehicle_id: 1,
-        d_type: "ticket_machine",
-        d_name: "Biletomat nr 1",
-      },
-      {
-        id: 2,
-        vehicle_id: 1,
-        d_type: "ticket_machine",
-        d_name: "Biletomat nr 2",
-      },
-      {
-        id: 3,
-        vehicle_id: 2,
-        d_type: "ticket_machine",
-        d_name: "Biletomat nr 1",
-      },
-      {
-        id: 4,
-        vehicle_id: 2,
-        d_type: "ticket_machine",
-        d_name: "Biletomat nr 2",
-      },
-      {
-        id: 5,
-        vehicle_id: 3,
-        d_type: "ticket_machine",
-        d_name: "Biletomat nr 1",
-      },
-      {
-        id: 6,
-        vehicle_id: 3,
-        d_type: "ticket_machine",
-        d_name: "Biletomat nr 2",
-      },
-      {
-        id: 7,
-        vehicle_id: 4,
-        d_type: "ticket_machine",
-        d_name: "Biletomat nr 1",
-      },
-      {
-        id: 8,
-        vehicle_id: 5,
-        d_type: "ticket_machine",
-        d_name: "Biletomat nr 2",
-      }
-    ];
+    //retrieve data from the database //
+    this.getJSON("http://localhost/vehicles").then(data => {
+      this.vehicles.data = Array.isArray(data) ? data : [];
+    });
+    this.getJSON("http://localhost/devices").then(data => {
+      this.devices.data = Array.isArray(data) ? data : [];
+    });
+    this.getJSON("http://localhost/components").then(data => {
+      this.components.data = Array.isArray(data) ? data : [];
+    });
+    this.getJSON("http://localhost/status").then(data => {
+      this.status.data = Array.isArray(data) ? data : [];
+      this.prepareStatus(data);
+    });
 
-    const components: ComponentsInterface[] = [
-      {
-        id: 1,
-        device_id: 1,
-        c_type: "payment_terminal",
-        c_name: "Trminal płatniczy",
-      },
-      {
-        id: 2,
-        device_id: 1,
-        c_type: "qr_code_reader",
-        c_name: "Czytnik kodów QR"
-      },
-      {
-        id: 3,
-        device_id: 1,
-        c_type: "printer",
-        c_name: "Drukarka termiczna"
-      },
-      {
-        id: 4,
-        device_id: 2,
-        c_type: "payment_terminal",
-        c_name: "Trminal płatniczy"
-      },
-      {
-        id: 5,
-        device_id: 2,
-        c_type: "qr_code_reader",
-        c_name: "Czytnik kodów QR"
-      },
-      {
-        id: 6,
-        device_id: 2,
-        c_type: "printer",
-        c_name: "Drukarka termiczna"
-      },
-      {
-        id: 7,
-        device_id: 3,
-        c_type: "payment_terminal",
-        c_name: "Trminal płatniczy"
-      },
-      {
-        id: 8,
-        device_id: 3,
-        c_type: "qr_code_reader",
-        c_name: "Czytnik kodów QR"
-      },
-      {
-        id: 9,
-        device_id: 3,
-        c_type: "printer",
-        c_name: "Drukarka termiczna"
-      },
-      {
-        id: 10,
-        device_id: 4,
-        c_type: "payment_terminal",
-        c_name: "Trminal płatniczy"
-      },
-      {
-        id: 11,
-        device_id: 4,
-        c_type: "qr_code_reader",
-        c_name: "Czytnik kodów QR"
-      },
-      {
-        id: 12,
-        device_id: 4,
-        c_type: "printer",
-        c_name: "Drukarka termiczna"
-      },
-      {
-        id: 13,
-        device_id: 5,
-        c_type: "payment_terminal",
-        c_name: "Trminal płatniczy"
-      },
-      {
-        id: 14,
-        device_id: 5,
-        c_type: "qr_code_reader",
-        c_name: "Czytnik kodów QR"
-      },
-      {
-        id: 15,
-        device_id: 5,
-        c_type: "printer",
-        c_name: "Drukarka termiczna"
-      },
-      {
-        id: 16,
-        device_id: 6,
-        c_type: "payment_terminal",
-        c_name: "Trminal płatniczy"
-      },
-      {
-        id: 17,
-        device_id: 6,
-        c_type: "qr_code_reader",
-        c_name: "Czytnik kodów QR"
-      },
-      {
-        id: 18,
-        device_id: 6,
-        c_type: "printer",
-        c_name: "Drukarka termiczna"
-      },
-      {
-        id: 19,
-        device_id: 7,
-        c_type: "payment_terminal",
-        c_name: "Trminal płatniczy"
-      },
-      {
-        id: 20,
-        device_id: 7,
-        c_type: "qr_code_reader",
-        c_name: "Czytnik kodów QR"
-      },
-      {
-        id: 21,
-        device_id: 7,
-        c_type: "printer",
-        c_name: "Drukarka termiczna",
-      },
-      {
-        id: 22,
-        device_id: 8,
-        c_type: "payment_terminal",
-        c_name: "Trminal płatniczy"
-      },
-      {
-        id: 23,
-        device_id: 8,
-        c_type: "qr_code_reader",
-        c_name: "Czytnik kodów QR"
-      },
-      {
-        id: 34,
-        device_id: 8,
-        c_type: "printer",
-        c_name: "Drukarka termiczna"
-      }
-    ];
-
-    const status: StatusInterface[] = [
-      {
-        id: 1,
-        component_id: 1,
-        s_type: "error",
-        s_description: "Brak zasilania"
-      },
-      {
-        id: 2,
-        component_id: 21,
-        s_type: "warning",
-        s_description: "Zacięcie papieru"
-      }
-    ];
-    this.vehicles.data = vehicles;
-    this.devices.data = devices;
-    this.devicesList = devices; //temp
   }
+  prepareStatus(data: any) {
 
+  }
 
   // Filter Vehicles by type 
   applyFilter(data: any) {
+    this.expandedElementVehicle = null;
+    this.expandedElementDevice = null;
+    this.expandedElementComponent = null;
     this.vehicles.filter = data.value;
   }
-  // Filter Devices by vehicle_id
-  applyDeviceFilter(data: number) {
-    this.devices.filter = data.toString();
+  // Filter children by parent_id
+  applySubFilter(level: string, data: number) {
+    switch (level) {
+      case 'vehicle':
+        this.devices.data = [];
+        this.getJSON("http://localhost/devices/vehicle_" + data).then(data => {
+          this.devices.data = Array.isArray(data) ? data : [];
+        });
+        break;
+      case 'device':
+        this.components.data = [];
+        this.getJSON("http://localhost/components/device_" + data).then(data => {
+          this.components.data = Array.isArray(data) ? data : [];
+        });
+        break;
+      case 'component':
+        this.status.data = [];
+        this.getJSON("http://localhost/status/component_" + data).then(data => {
+          this.status.data = Array.isArray(data) ? data : [];
+        });
+        break;
+    }
   }
 }
